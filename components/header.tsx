@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
+import { DrawerActions } from '@react-navigation/native';
 
 export default function Header() {
-  const router = useRouter(); // Use router to navigate or open the drawer
+  const navigation = useNavigation();
 
   return (
     <View style={styles.header}>
@@ -11,7 +12,9 @@ export default function Header() {
         source={require('../assets/images/logo.png')}
         style={styles.logo}
       />
-      <TouchableOpacity onPress={() => router.push('(drawer)')}>
+      <TouchableOpacity
+        onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+      >
         <Image
           source={require('../assets/images/menu-icon.png')}
           style={styles.menuIcon}

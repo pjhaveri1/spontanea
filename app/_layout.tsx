@@ -1,7 +1,8 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { Tabs } from 'expo-router'; // Use Tabs for the (tabs) route
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
@@ -9,30 +10,27 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/components/useColorScheme';
 
 export {
-  // Catch any errors thrown by the Layout component.
   ErrorBoundary,
 } from 'expo-router';
 
 export const unstable_settings = {
-  // Ensure that reloading on /modal keeps a back button present.
-  initialRouteName: '(tabs)', // Set the initial screen to the tab-based layout
+  initialRouteName: '(index)',
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+const Drawer = createDrawerNavigator();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font, // Load FontAwesome for icons
+    ...FontAwesome.font,
   });
 
-  // Catch any font loading errors
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
-  // Hide the splash screen once fonts are loaded
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
@@ -40,7 +38,7 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return null; // Optionally return a loading indicator while fonts are loading
+    return null;
   }
 
   return <RootLayoutNav />;
@@ -51,29 +49,35 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false }}>
-        {/* Tab-based screens */}
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Drawer.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        {/* Map (tabs) as a Tab Navigator */}
+        <Drawer.Screen
+          name="Tabs"
+          options={{ title: 'Home' }}
+          component={Tabs} // This links the (tabs) folder automatically
+        />
 
-        {/* Modal screen */}
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-
-        {/* Non-tab screen: Generate Adventure */}
-        <Stack.Screen
+        {/* Add Generate Adventure */}
+        <Drawer.Screen
           name="GenerateAdventure"
           options={{
-            headerShown: false, // Show the header
-            title: "Generate Adventure", // Customize the header title
+            title: 'Generate Adventure',
+            headerShown: true,
             headerStyle: {
-              backgroundColor: "#66D9EF", // Customize the header background color
+              backgroundColor: '#66D9EF',
             },
             headerTitleStyle: {
-              fontFamily: 'SpaceMono', // Use a custom font for the title
+              fontFamily: 'SpaceMono',
               fontSize: 18,
             },
           }}
+          component={() => <Tabs initialRouteName="GenerateAdventure" />}
         />
-      </Stack>
+      </Drawer.Navigator>
     </ThemeProvider>
   );
 }
