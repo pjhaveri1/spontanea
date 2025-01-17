@@ -1,31 +1,38 @@
-import { StyleSheet } from 'react-native';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import Header from "/Users/PrachiJhaveri_1/Desktop/Spontanea/spontanea/components/header"; // Adjust the path as needed
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
-
-export default function TabTwoScreen() {
+export default function Adventure() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/two.tsx" />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});
+      <View style={styles.container}>
+        {/* Header */}
+        <Header />
+  
+        {/* Content */}
+        <View style={styles.content}>
+          {/* Title */}
+          <Text style={styles.title}>My Favourite Adventures</Text>
+        </View>
+      </View>
+    );
+  }
+  
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#FFFFFF',
+      paddingHorizontal: 20,
+    },
+    content: {
+      flex: 1,
+      alignItems: 'center', // Center content horizontally
+      paddingTop: 0, // Optional spacing above content
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginBottom: 15,
+      color: '#333333',
+    },
+  });
+  
