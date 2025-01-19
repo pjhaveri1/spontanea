@@ -49,16 +49,18 @@ function DrawerItem({
   icon: string;
   iconType: 'FontAwesome' | 'Entypo';
 }) {
+  // Select the appropriate icon component
   const IconComponent = iconType === 'FontAwesome' ? FontAwesome : Entypo;
 
   return (
     <View style={styles.drawerItem}>
-      {/* Ensure IconComponent renders properly */}
+      {/* Cast the icon name explicitly to avoid TypeScript errors */}
       <IconComponent name={icon as any} size={24} color="black" style={styles.icon} />
       <Text style={styles.drawerLabel}>{label}</Text>
     </View>
   );
 }
+
 
 function CustomDrawerContent({ navigation }: any) {
   return (
@@ -79,8 +81,8 @@ function CustomDrawerContent({ navigation }: any) {
       {/* Drawer Items */}
       <View style={styles.menuItems}>
         <DrawerItem label="Profile" icon="user" iconType="FontAwesome" />
-        <DrawerItem label="Achievements" icon="trophy" iconType="FontAwesome" />
-        <DrawerItem label="Sign Out" icon="log-out" iconType="Entypo" />
+        <DrawerItem label="Achievements" icon="star" iconType="FontAwesome" />
+        <DrawerItem label="Sign Out" icon="log-out" iconType="Entypo" /> {/* Entypo for Sign Out */}
       </View>
     </View>
   );
