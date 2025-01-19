@@ -7,12 +7,14 @@ import {
   Image,
 } from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import Header from '/Users/PrachiJhaveri_1/Desktop/Spontanea/spontanea/components/header'; // Adjust path as needed
+import { useNavigation } from '@react-navigation/native';
 
 export default function GenerateAdventure() {
   const [duration, setDuration] = useState(5); // Default duration in hours
   const [budgetRange, setBudgetRange] = useState([50, 150]); // Default budget range
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null); // Single selected category
+
+  const navigation = useNavigation();
 
   const categories = [
     { id: '1', name: 'Nature', image: require('../assets/images/nature.jpg') },
@@ -27,11 +29,25 @@ export default function GenerateAdventure() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <Header />
+      {/* Custom Header with Back Button */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+          accessibilityLabel="Go back"
+        >
+          <Image
+            source={require('../assets/images/back-icon.png')}
+            style={styles.backIcon}
+          />
+        </TouchableOpacity>
+      </View>
 
       {/* Title */}
-      <Text style={styles.title}>Let us find an adventure for you!</Text>
+      <Text style={styles.title}>Generate Adventure</Text>
+
+      {/* Subtitle */}
+      <Text style={styles.subtitle}>Let us find an adventure for you!</Text>
 
       {/* Duration Section */}
       <View style={styles.section}>
@@ -132,6 +148,7 @@ export default function GenerateAdventure() {
                 key={item.id}
                 style={styles.categoryContainer}
                 onPress={() => setSelectedCategory(item.id)}
+                accessibilityLabel={`Select ${item.name} category`}
               >
                 <View
                   style={[
@@ -158,6 +175,7 @@ export default function GenerateAdventure() {
                 key={item.id}
                 style={styles.categoryContainer}
                 onPress={() => setSelectedCategory(item.id)}
+                accessibilityLabel={`Select ${item.name} category`}
               >
                 <View
                   style={[
@@ -183,7 +201,11 @@ export default function GenerateAdventure() {
 
       {/* Start Button */}
       <View style={styles.fixedStartButtonContainer}>
-        <TouchableOpacity style={styles.startButton}>
+        <TouchableOpacity
+          style={styles.startButton}
+          onPress={() => console.log('Adventure Started')} // Replace with actual functionality
+          accessibilityLabel="Start the adventure"
+        >
           <Text style={styles.startButtonText}>LET'S START</Text>
         </TouchableOpacity>
       </View>
@@ -197,13 +219,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
   },
+  header: {
+    flexDirection: 'row',
+    marginTop: 45,
+  },
+  backButton: {
+    padding: 5,
+  },
+  backIcon: {
+    width: 24,
+    height: 24,
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: -15,
-    marginBottom: 10,
+    marginVertical: 15,
     color: '#333333',
+  },
+  subtitle: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#666666',
+    marginBottom: 20,
   },
   section: {
     marginBottom: 12,
