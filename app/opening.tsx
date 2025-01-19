@@ -1,26 +1,26 @@
 import React, { useEffect } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, StyleSheet, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Opening() {
-  const router = useRouter();
+  const navigation = useNavigation();
 
   useEffect(() => {
-    // Simulate a delay for the splash screen
-    const timer = setTimeout(() => {
-      router.replace('/onboarding/onboarding1'); // Navigate to onboarding1
-    }, 3000); // 3 seconds delay
+    // Redirect to LoginAndSignup after 2 seconds
+    const timeout = setTimeout(() => {
+      navigation.navigate('LoginSignup' as never);
+    }, 2000);
 
-    return () => clearTimeout(timer); // Cleanup the timer
-  }, []);
+    return () => clearTimeout(timeout); // Cleanup timeout on component unmount
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
       <Image
-        source={require('/Users/PrachiJhaveri_1/Desktop/Spontanea/spontanea/assets/images/logo.png')}
+        source={require('../assets/images/logo.png')} // Update path as necessary
         style={styles.logo}
       />
-      <Text style={styles.tagline}>Small Adventures, Big Joys</Text>
+      <Text style={styles.tagline}>SMALL ADVENTURES, BIG JOYS</Text>
     </View>
   );
 }
@@ -28,19 +28,23 @@ export default function Opening() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#DDF3F5',
+    backgroundColor: '#66D9EF',
     justifyContent: 'center',
     alignItems: 'center',
   },
   logo: {
-    width: 200,
-    height: 200,
-    resizeMode: 'contain',
+    width: 250,
+    height:140, // Adjusted for better scaling
+    marginBottom: 0,
   },
   tagline: {
-    marginTop: 20,
-    fontSize: 18,
-    color: '#333',
+    fontSize: 15,
     fontWeight: 'bold',
+    color: '#333333',
+    marginTop: 10,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 2,
   },
 });
