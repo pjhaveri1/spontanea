@@ -25,7 +25,7 @@ export default function Signup() {
 
   const handleSignIn = () => {
     // Navigate back to LoginAndSignup
-    navigation.navigate('LoginSignup' as never);
+    navigation.navigate('Login' as never);
   };
 
   const handleBack = () => {

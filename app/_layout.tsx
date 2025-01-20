@@ -1,7 +1,7 @@
 import React from 'react';
-import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { ThemeProvider, DefaultTheme } from '@react-navigation/native';
-import TabLayout from './tabs/_layout'; // Home screen
+import TabLayout from './tabs/_layout'; 
 import GenerateAdventure from './GenerateAdventure';
 import Opening from './opening';
 import LoginAndSignup from './auth/loginandsignup';
@@ -18,7 +18,9 @@ export default function RootLayout() {
         initialRouteName="Opening"
         screenOptions={{
           headerShown: false, // Disable global headers
-          cardStyleInterpolator: TransitionPresets.DefaultTransition.cardStyleInterpolator, // For default cut transition
+          cardStyleInterpolator: () => ({ // No animation for transitions
+            cardStyle: { opacity: 1 },
+          }),
         }}
       >
         {/* Opening Screen */}
@@ -42,6 +44,7 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
+
 
 // Drawer Navigator
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -104,7 +107,10 @@ function CustomDrawerContent({ navigation }: any) {
           label="Sign Out"
           icon="log-out"
           iconType="Entypo"
-          onPress={() => console.log('User signed out')}
+          onPress={() => navigation.reset({
+            index: 0,
+            routes: [{ name: 'LoginSignup' }],
+          })}
         />
       </View>
     </View>
