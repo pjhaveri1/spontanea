@@ -1,34 +1,30 @@
 const express = require('express');
+const router = express.Router();
 const Adventure = require('../models/Adventure');
 
-const router = express.Router();
-
-// Get All Adventures or Filter by Preferences
-router.get('/', async (req, res) => {
-  const { category, duration, priceRange } = req.query;
-
+// Endpoint for filtering adventures
+router.get('/filter', async (req, res) => {
   try {
-    let query = {};
+    const { duration, budget, category } = req.query;
 
-    if (category) query.category = category;
-    if (duration) query.estimatedDuration = duration;
-    if (priceRange) query.priceRange = priceRange;
+    // Convert duration and budget to numbers if needed
+    const durationNum = parseInt(duration, 10);
+    const budgetNum = parseInt(budget, 10);
 
-    const adventures = await Adventure.find(query);
+    const adventures = await Adventure.find({
+      ...(duration && { estimated_duration: { $lte: durationNum } }),
+      ...(budget && {
+        $or: [
+          { estimated_price_low: { $lte: budgetNum } },
+          { estimated_price_high: { $lte: budgetNum } },
+        ],
+      }),
+      ...(category && { category: category }),
+    });
+
     res.json(adventures);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Add a New Adventure
-router.post('/', async (req, res) => {
-  try {
-    const newAdventure = new Adventure(req.body);
-    const savedAdventure = await newAdventure.save();
-    res.status(201).json(savedAdventure);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching adventures', error: err });
   }
 });
 

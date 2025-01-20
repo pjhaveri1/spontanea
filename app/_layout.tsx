@@ -8,6 +8,8 @@ import LoginAndSignup from './auth/loginandsignup';
 import Login from './auth/login';
 import Signup from './auth/signup';
 import Home from './tabs/index'; // Home Screen
+import AdventureResults from './AdventureResults'; 
+import { RootStackParamList } from '../types'; 
 
 const Stack = createStackNavigator();
 
@@ -40,11 +42,13 @@ export default function RootLayout() {
 
         {/* Generate Adventure Screen */}
         <Stack.Screen name="GenerateAdventure" component={GenerateAdventure} />
+
+        {/* Adventure Results Screen */}
+        <Stack.Screen name="AdventureResults" component={AdventureResults} />
       </Stack.Navigator>
     </ThemeProvider>
   );
 }
-
 
 // Drawer Navigator
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -107,10 +111,12 @@ function CustomDrawerContent({ navigation }: any) {
           label="Sign Out"
           icon="log-out"
           iconType="Entypo"
-          onPress={() => navigation.reset({
-            index: 0,
-            routes: [{ name: 'LoginSignup' }],
-          })}
+          onPress={() =>
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'LoginSignup' }],
+            })
+          }
         />
       </View>
     </View>
