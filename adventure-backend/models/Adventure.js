@@ -20,4 +20,4 @@ const adventureSchema = new mongoose.Schema({
   estimated_price_high: { type: Number },
 });
 
-module.exports = mongoose.model('Adventure', adventureSchema);
+module.exports = mongoose.model('Activity', adventureSchema, 'activities'); // Explicitly specify the collection name

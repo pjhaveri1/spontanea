@@ -1,52 +1,53 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ThemeProvider, DefaultTheme } from '@react-navigation/native';
-import TabLayout from './tabs/_layout'; 
+import TabLayout from './tabs/_layout';
 import GenerateAdventure from './GenerateAdventure';
 import Opening from './opening';
 import LoginAndSignup from './auth/loginandsignup';
 import Login from './auth/login';
 import Signup from './auth/signup';
-import Home from './tabs/index'; // Home Screen
-import AdventureResults from './AdventureResults'; 
-import { RootStackParamList } from '../types'; 
+import Home from './tabs/index';
+import AdventureResults from './AdventureResults';
+import AdventureDetail from './AdventureDetail';
+import DirectionsPage from './DirectionsPage';
+import { RootStackParamList } from '../types';
+import { MyAdventuresProvider } from './MyAdventuresContext';
+import SeeAllActivities from './SeeAllActivities';
+import Toast from 'react-native-toast-message';
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>(); // Use typed navigator
 
 export default function RootLayout() {
   return (
-    <ThemeProvider value={DefaultTheme}>
-      <Stack.Navigator
-        initialRouteName="Opening"
-        screenOptions={{
-          headerShown: false, // Disable global headers
-          cardStyleInterpolator: () => ({ // No animation for transitions
-            cardStyle: { opacity: 1 },
-          }),
-        }}
-      >
-        {/* Opening Screen */}
-        <Stack.Screen name="Opening" component={Opening} />
-
-        {/* Login and Signup Screen */}
-        <Stack.Screen name="LoginSignup" component={LoginAndSignup} />
-
-        {/* Login Screen */}
-        <Stack.Screen name="Login" component={Login} />
-
-        {/* Signup Screen */}
-        <Stack.Screen name="Signup" component={Signup} />
-
-        {/* Main Flow (Home or Drawer Navigation) */}
-        <Stack.Screen name="Home" component={MainDrawerNavigator} />
-
-        {/* Generate Adventure Screen */}
-        <Stack.Screen name="GenerateAdventure" component={GenerateAdventure} />
-
-        {/* Adventure Results Screen */}
-        <Stack.Screen name="AdventureResults" component={AdventureResults} />
-      </Stack.Navigator>
-    </ThemeProvider>
+    <>
+      <MyAdventuresProvider>
+        <ThemeProvider value={DefaultTheme}>
+          <Stack.Navigator
+            initialRouteName="Opening"
+            screenOptions={{
+              headerShown: false,
+              cardStyleInterpolator: () => ({
+                cardStyle: { opacity: 1 },
+              }),
+            }}
+          >
+            <Stack.Screen name="Opening" component={Opening} />
+            <Stack.Screen name="LoginSignup" component={LoginAndSignup} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Signup" component={Signup} />
+            <Stack.Screen name="Home" component={MainDrawerNavigator} />
+            <Stack.Screen name="GenerateAdventure" component={GenerateAdventure} />
+            <Stack.Screen name="AdventureResults" component={AdventureResults} />
+            <Stack.Screen name="AdventureDetail" component={AdventureDetail} />
+            <Stack.Screen name="DirectionsPage" component={DirectionsPage} />
+            <Stack.Screen name="SeeAllActivities" component={SeeAllActivities} />
+          </Stack.Navigator>
+        </ThemeProvider>
+      </MyAdventuresProvider>
+      {/* Toast Message Component */}
+      <Toast />
+    </>
   );
 }
 
@@ -61,7 +62,7 @@ const Drawer = createDrawerNavigator();
 function MainDrawerNavigator() {
   return (
     <Drawer.Navigator
-      initialRouteName="Home" // Explicitly set the initial route for the drawer
+      initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         drawerPosition: 'right',
@@ -91,7 +92,7 @@ function CustomDrawerContent({ navigation }: any) {
           style={styles.profileImage}
         />
         <Text style={styles.userName}>Prachi Jhaveri</Text>
-        <Text style={styles.userType}>Premium Member</Text>
+        <Text style={styles.userType}>Free Member</Text>
       </View>
       <View style={styles.divider} />
       <View style={styles.menuItems}>

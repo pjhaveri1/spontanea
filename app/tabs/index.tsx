@@ -11,11 +11,107 @@ import {
 import { useFonts } from 'expo-font';
 import { Montserrat_700Bold, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
 import { OpenSans_700Bold, OpenSans_400Regular } from '@expo-google-fonts/open-sans';
-import { useRouter } from 'expo-router'; // Import useRouter for navigation
-import Header from '/Users/PrachiJhaveri_1/Desktop/Spontanea/spontanea/components/header'; // Adjust path as needed
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '/Users/PrachiJhaveri_1/Desktop/Spontanea/spontanea/types';
+import Header from '/Users/PrachiJhaveri_1/Desktop/Spontanea/spontanea/components/header';
+import { generatedAdventures } from '../GenerateAdventure'; // Import adventures from GenerateAdventure
+
+interface Activity {
+    id: string;
+    name: string;
+    category: string;
+    budget: number;
+    estimated_duration: number;
+    address: string;
+    photos: string;
+    overview: string;
+    details: string;
+    reviews: { user: string; rating: number; comment: string }[];
+    directions?: string[];
+    longitude: number;
+    latitude: number;
+}
+
+const recommendedActivities: Activity[] = [
+    {
+        id: '1',
+        name: 'Big Buddha',
+        category: 'Cultural Site',
+        budget: 189,
+        estimated_duration: 2,
+        address: 'Lantau Island',
+        photos: 'https://houseofcoco.net/wp-content/uploads/images/2128c933605a742081178ab020749475bc1e501d-931x697.jpg',
+        overview: 'A large bronze statue of Buddha, symbolizing peace and harmony.',
+        details: 'The Big Buddha is a major center of Buddhism in Hong Kong.',
+        reviews: [
+            { user: 'Alice', rating: 4.4, comment: 'A must-visit for peace and tranquility.' },
+            { user: 'John', rating: 4.7, comment: 'Great views and cultural significance.' },
+        ],
+        directions: ['Take the MTR to Tung Chung Station', 'Switch to Ngong Ping 360 cable car'],
+        latitude: 22.25230,
+        longitude: 114.03230,
+    },
+    {
+        id: '2',
+        name: 'Bride’s Pool',
+        category: 'Natural Site',
+        budget: 80,
+        estimated_duration: 3,
+        address: 'Tai Po',
+        photos: 'https://forsomethingmore.com/wp-content/uploads/2020/05/Brides-Pool-Hong-Kong-COVER1-2.jpg',
+        overview: 'A serene waterfall with a tragic love story behind its name.',
+        details: 'Perfect for a quiet retreat and connection with nature.',
+        reviews: [
+            { user: 'Sophia', rating: 3.8, comment: 'The sound of the waterfall is so soothing!' },
+        ],
+        directions: ['Take bus 275R from Tai Po Market', 'Follow hiking trail to Bride’s Pool'],
+        latitude: 22.48270,
+        longitude: 114.24410,
+    },
+    {
+        id: '3',
+        name: 'Disneyland',
+        category: 'Theme Park',
+        budget: 699,
+        estimated_duration: 6,
+        address: 'Lantau Island',
+        photos: 'https://www.discoverhongkong.com/eng/explore/attractions/the-ultimate-guide-to-hong-kong-disneyland.thumb.800.480.png?ck=1730184312',
+        overview: 'A magical place for families and friends to create unforgettable memories.',
+        details: 'Enjoy thrilling rides, amazing parades, and spectacular fireworks.',
+        reviews: [
+            { user: 'Michael', rating: 4.6, comment: 'A magical day with the family!' },
+        ],
+        directions: ['Take the MTR to Sunny Bay Station', 'Switch to Disneyland Resort Line'],
+        latitude: 22.3130,
+        longitude: 114.0413,
+    },
+    {
+        id: '4',
+        name: 'Water World Ocean Park',
+        category: 'Theme Park',
+        budget: 499,
+        estimated_duration: 6,
+        address: 'Aberdeen',
+        photos: 'https://res.klook.com/image/upload/q_85/c_fill,w_750/v1627023373/blog/rb2jcfxng8ompttpmyx3.jpg',
+        overview: 'Just minutes from Hong Kong’s urban center, Water World Ocean Park Hong Kong transports you into a year-round, all-weather seaside water park, hidden in a natural wonderland.',
+        details: 'Fully immerse yourself in the enticing experiences with 27 indoor and outdoor attractions across five zones within Water World!',
+        reviews: [
+            { user: 'John', rating: 5, comment: 'The kids loved it and so did the adults!' },
+        ],
+        directions: ['take the MTR South Island Line and get off at Ocean Park Station for direct access to Ocean Parks park entrance for interchange to The Shuttle Bus. ', 'The Shuttle Bus route runs to and from the Ocean Park Main Entrance, connecting the Water World in just 15 minutes.'],
+        latitude: 22.238309496982172,
+        longitude: 114.16907248932108,
+    },
+];
+
+// Combine both sets of activities
+const allActivities = [...recommendedActivities, ...generatedAdventures];
+
+type NavigationProp = StackNavigationProp<RootStackParamList, 'AdventureDetail'>;
 
 export default function Index() {
-    const router = useRouter(); // Initialize the router object
+    const navigation = useNavigation<NavigationProp>();
 
     const [fontsLoaded] = useFonts({
         MontserratBold: Montserrat_700Bold,
@@ -28,75 +124,66 @@ export default function Index() {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
 
+    const handleActivityPress = (activity: Activity) => {
+        navigation.navigate('AdventureDetail', { adventure: activity });
+    };
+
+    const handleSurpriseMe = () => {
+        const randomActivity =
+            allActivities[Math.floor(Math.random() * allActivities.length)];
+        navigation.navigate('AdventureDetail', { adventure: randomActivity });
+    };
+
     return (
         <View style={styles.container}>
-            {/* Reusable Header */}
             <Header />
 
-            {/* Welcome Section */}
             <View style={styles.welcomeSection}>
                 <Text style={styles.welcomeText}>Welcome!</Text>
                 <Text style={styles.userName}>Prachi Jhaveri</Text>
             </View>
 
-            {/* Tagline Section */}
             <Text style={styles.tagline} numberOfLines={1} ellipsizeMode="tail">
                 Let’s <Text style={styles.boldText}>start</Text> your <Text style={styles.boldText}>adventure</Text>
             </Text>
 
             <Text style={styles.subTagline}>Small Adventures, Big Joys</Text>
 
-            {/* Buttons Section */}
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     style={styles.generateButton}
-                    onPress={() => router.push('/GenerateAdventure')} // Navigate to GenerateAdventure
+                    onPress={() => navigation.navigate('GenerateAdventure')}
                 >
                     <Text style={styles.buttonText}>GENERATE ADVENTURE</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.surpriseButton}>
+                <TouchableOpacity style={styles.surpriseButton} onPress={handleSurpriseMe}>
                     <Text style={styles.buttonText}>SURPRISE ME!</Text>
                 </TouchableOpacity>
             </View>
 
-            {/* Personal Recommendations Section */}
             <View style={styles.recommendations}>
-                <Text style={styles.recommendationHeader}>Personal Recommendations</Text>
-                <TouchableOpacity>
+                <Text style={styles.recommendationHeader}>Daily Recommendations</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('SeeAllActivities', { activities: recommendedActivities })}>
                     <Text style={styles.seeAll}>See All ></Text>
                 </TouchableOpacity>
             </View>
 
-            {/* Horizontal Scrollable Cards */}
-            <ScrollView 
-                horizontal={true} 
-                showsHorizontalScrollIndicator={false} 
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
                 style={styles.horizontalScroll}
             >
-                <View style={styles.card}>
-                    <Image
-                        source={require('/Users/PrachiJhaveri_1/Desktop/Spontanea/spontanea/assets/images/big-buddha.jpg')}
-                        style={styles.cardImage}
-                    />
-                    <Text style={styles.cardText}>Big Buddha</Text>
-                    <Text style={styles.cardRating}>⭐ 4.5</Text>
-                </View>
-                <View style={styles.card}>
-                    <Image
-                        source={require('/Users/PrachiJhaveri_1/Desktop/Spontanea/spontanea/assets/images/brides-pool.jpg')}
-                        style={styles.cardImage}
-                    />
-                    <Text style={styles.cardText}>Bride’s Pool</Text>
-                    <Text style={styles.cardRating}>⭐ 4.7</Text>
-                </View>
-                <View style={styles.card}>
-                    <Image
-                        source={require('/Users/PrachiJhaveri_1/Desktop/Spontanea/spontanea/assets/images/disneyland.jpeg')}
-                        style={styles.cardImage}
-                    />
-                    <Text style={styles.cardText}>Disneyland</Text>
-                    <Text style={styles.cardRating}>⭐ 5.0</Text>
-                </View>
+                {recommendedActivities.slice(0, 3).map((activity) => (
+                    <TouchableOpacity 
+                        key={activity.id} 
+                        style={styles.card} 
+                        onPress={() => handleActivityPress(activity)}
+                    >
+                        <Image source={{ uri: activity.photos }} style={styles.cardImage} />
+                        <Text style={styles.cardText}>{activity.name}</Text>
+                        <Text style={styles.cardRating}>⭐ {activity.reviews[0]?.rating || 'N/A'}</Text>
+                    </TouchableOpacity>
+                ))}
             </ScrollView>
         </View>
     );
@@ -140,28 +227,28 @@ const styles = StyleSheet.create({
         marginBottom: 25,
     },
     buttonContainer: {
-        flexDirection: "column",
-        alignItems: "center",
+        flexDirection: 'column',
+        alignItems: 'center',
         marginBottom: 30,
     },
     generateButton: {
-        backgroundColor: "#FF4500",
+        backgroundColor: '#FF4500',
         paddingVertical: 15,
         width: 320,
         borderRadius: 65,
         marginBottom: 22,
     },
     surpriseButton: {
-        backgroundColor: "#00A9A5",
+        backgroundColor: '#00A9A5',
         paddingVertical: 15,
         width: 320,
         borderRadius: 65,
     },
     buttonText: {
         fontFamily: 'MontserratBold',
-        color: "white",
+        color: 'white',
         fontSize: 22,
-        textAlign: "center",
+        textAlign: 'center',
     },
     recommendations: {
         flexDirection: 'row',
