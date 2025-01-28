@@ -23,7 +23,7 @@ interface AdventureResultsProps {
 }
 
 export default function AdventureResults({ route }: AdventureResultsProps) {
-  const { adventures } = route.params;
+  const { adventures, duration, budget, category } = route.params; // Extract prior options
   const navigation = useNavigation<AdventureResultsNavigationProp>();
 
   const renderAdventure = ({ item: adventure }: { item: typeof adventures[0] }) => (
@@ -86,6 +86,26 @@ export default function AdventureResults({ route }: AdventureResultsProps) {
 
       <Text style={styles.title}>Adventures For You</Text>
 
+      {/* Edit Preferences Button */}
+      <TouchableOpacity
+        style={styles.editPreferencesButton}
+        onPress={() =>
+          navigation.navigate('GenerateAdventure', {
+            duration,
+            budget,
+            category,
+          })
+        }
+      >
+        <View style={styles.editPreferencesRow}>
+          <Image
+            source={require('../assets/images/filter-icon.png')} // Replace with your filter icon
+            style={styles.filterIcon}
+          />
+          <Text style={styles.editPreferencesButtonText}>Edit Preferences</Text>
+        </View>
+      </TouchableOpacity>
+
       {/* Adventure List */}
       <FlatList
         data={adventures}
@@ -128,7 +148,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#333333',
-    marginBottom: 30,
+    marginBottom: 5,
+  },
+  editPreferencesButton: {
+    alignSelf: 'flex-start',
+    marginBottom: 0,
+    paddingHorizontal: 25,
+    paddingVertical: 10,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  editPreferencesRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  filterIcon: {
+    width: 15,
+    height: 15,
+    marginRight: 8,
+  },
+  editPreferencesButtonText: {
+    color: '#333',
+    fontSize: 14,
   },
   adventureList: {
     paddingHorizontal: 25,

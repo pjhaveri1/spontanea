@@ -11,6 +11,8 @@ import Home from './tabs/index';
 import AdventureResults from './AdventureResults';
 import AdventureDetail from './AdventureDetail';
 import DirectionsPage from './DirectionsPage';
+import UserProfile from './UserProfile'
+import Missions from './Missions'
 import { RootStackParamList } from '../types';
 import { MyAdventuresProvider } from './MyAdventuresContext';
 import SeeAllActivities from './SeeAllActivities';
@@ -74,9 +76,14 @@ function MainDrawerNavigator() {
     >
       <Drawer.Screen name="Home" component={TabLayout} />
       <Drawer.Screen
-        name="GenerateAdventure"
-        options={{ title: 'Generate Adventure' }}
-        component={GenerateAdventure}
+        name="UserProfile"
+        options={{ title: 'Profile' }} 
+        component={UserProfile}
+      />
+      <Drawer.Screen
+        name="Missions"
+        options={{ title: 'Missions' }} 
+        component={Missions}
       />
     </Drawer.Navigator>
   );
@@ -92,7 +99,7 @@ function CustomDrawerContent({ navigation }: any) {
           style={styles.profileImage}
         />
         <Text style={styles.userName}>Prachi Jhaveri</Text>
-        <Text style={styles.userType}>Free Member</Text>
+        <Text style={styles.userType}>Premium Member</Text>
       </View>
       <View style={styles.divider} />
       <View style={styles.menuItems}>
@@ -100,13 +107,13 @@ function CustomDrawerContent({ navigation }: any) {
           label="Profile"
           icon="user"
           iconType="FontAwesome"
-          onPress={() => navigation.navigate('Profile')}
+          onPress={() => navigation.navigate('UserProfile')}
         />
         <DrawerItem
           label="Achievements"
           icon="star"
           iconType="FontAwesome"
-          onPress={() => navigation.navigate('Achievements')}
+          onPress={() => navigation.navigate('Missions')}
         />
         <DrawerItem
           label="Sign Out"

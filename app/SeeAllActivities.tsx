@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useNavigation, useRoute, NavigationProp, RouteProp } from '@react-navigation/native';
+import { Linking } from 'react-native';
 
 type Activity = {
     id: string;
@@ -86,9 +87,17 @@ export default function SeeAllActivities() {
                         }}
                         title={activity.name}
                         description={`Price: $${activity.budget}`}
+                        onPress={() =>
+                            Linking.openURL(
+                                `https://www.google.com/maps/dir/?api=1&destination=${activity.latitude},${activity.longitude}`
+                            ).catch((err) =>
+                                console.error('Error opening Google Maps', err)
+                            )
+                        }
                     />
                 ))}
             </MapView>
+
 
             {/* Suggested Activities Section */}
             <View style={styles.suggestionsContainer}>

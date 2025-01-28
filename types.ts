@@ -28,9 +28,13 @@ export type RootStackParamList = {
   Signup: undefined;
   Home: undefined;
   Adventures: undefined;
-  GenerateAdventure: undefined;
+  GenerateAdventure: {
+    duration?: number;
+    budget?: number[]; // [minBudget, maxBudget]
+    category?: string;
+  }; // Allow optional params
   AdventureResults: {
-    adventures: Adventure[]; 
+    adventures: Adventure[];
     duration: number;
     budget: number[];
     category: string;
@@ -38,4 +42,7 @@ export type RootStackParamList = {
   AdventureDetail: { adventure: Adventure };
   DirectionsPage: { adventure: Adventure };
   SeeAllActivities: undefined;
+  UserProfile: undefined;
+  Missions: undefined;
 };
+

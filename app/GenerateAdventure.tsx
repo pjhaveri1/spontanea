@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   Image,
 } from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'; // Correct import for RouteProp
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 
@@ -15,6 +15,8 @@ type GenerateAdventureNavigationProp = StackNavigationProp<
   RootStackParamList,
   'GenerateAdventure'
 >;
+
+type GenerateAdventureRouteProp = RouteProp<RootStackParamList, 'GenerateAdventure'>;
 
 export const generatedAdventures = [
   {
@@ -25,10 +27,8 @@ export const generatedAdventures = [
     estimated_duration: 4,
     address: 'Sai Kung',
     photos: 'https://thingstodoinhk.com/assets/images/article/96/96-original.jpg',
-    overview:
-      'The Rock Pools are a stunning natural oasis located in Sai Kung. Known for their tranquil beauty, these pools are perfect for swimming and picnicking.',
-    details:
-      'Accessible via a short hike, the Rock Pools are a must-visit for nature enthusiasts. Bring your own food and drinks as there are no facilities nearby.',
+    overview: 'The Rock Pools are a stunning natural oasis located in Sai Kung. Known for their tranquil beauty, these pools are perfect for swimming and picnicking.',
+    details: 'Accessible via a short hike, the Rock Pools are a must-visit for nature enthusiasts. Bring your own food and drinks as there are no facilities nearby.',
     reviews: [
       { user: 'Alice', rating: 5, comment: 'Breathtaking views and so peaceful!' },
       { user: 'Bob', rating: 4, comment: 'The hike was a bit challenging but worth it!' },
@@ -50,10 +50,8 @@ export const generatedAdventures = [
     estimated_duration: 3,
     address: 'Ap Lei Chau',
     photos: 'https://www.journeyera.com/wp-content/uploads/2020/01/aP-LEI-CHAU-TO-AP-LEI-PAI-HIKE-mount-johnston-lighthouse-0621-1024x734.jpg',
-    overview:
-      'Ap Lei Chau Trail offers stunning coastal views and a rewarding lighthouse at the end of the hike.',
-    details:
-      'This trail is relatively easy and suitable for families. Don’t forget to bring water and sunscreen. Parking is available at the trailhead.',
+    overview: 'Ap Lei Chau Trail offers stunning coastal views and a rewarding lighthouse at the end of the hike.',
+    details: 'This trail is relatively easy and suitable for families. Don’t forget to bring water and sunscreen. Parking is available at the trailhead.',
     reviews: [
       { user: 'Charlie', rating: 5, comment: 'Perfect trail for beginners!' },
       { user: 'Dana', rating: 4, comment: 'Loved the lighthouse at the end!' },
@@ -69,10 +67,8 @@ export const generatedAdventures = [
     estimated_duration: 5,
     address: 'Cape D’Aguilar',
     photos: 'https://droneandslr.com/wp-content/uploads/2019/04/cape-d-aguilar-hong-kong-6.jpg',
-    overview:
-      'Cape D’Aguilar is a hidden gem with dramatic coastal cliffs and a marine reserve to explore.',
-    details:
-      'The area is perfect for photography and sightseeing. The trail is moderately challenging and not recommended during rainy weather.',
+    overview: 'Cape D’Aguilar is a hidden gem with dramatic coastal cliffs and a marine reserve to explore.',
+    details: 'The area is perfect for photography and sightseeing. The trail is moderately challenging and not recommended during rainy weather.',
     reviews: [
       { user: 'Eve', rating: 5, comment: 'Spectacular cliffs and ocean views!' },
       { user: 'Frank', rating: 4, comment: 'A bit crowded but still amazing!' },
@@ -83,10 +79,12 @@ export const generatedAdventures = [
 ];
 
 export default function GenerateAdventure() {
-  const [duration, setDuration] = useState(5); // Default duration in hours
-  const [budgetRange, setBudgetRange] = useState([50, 150]); // Default budget range
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null); // Single selected category
-  const navigation = useNavigation<GenerateAdventureNavigationProp>(); // Typed navigation
+  const route = useRoute<GenerateAdventureRouteProp>();
+  const navigation = useNavigation<GenerateAdventureNavigationProp>();
+
+  const [duration, setDuration] = useState(route.params?.duration || 5);
+  const [budgetRange, setBudgetRange] = useState(route.params?.budget || [50, 150]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(route.params?.category || null);
 
   const handleStartAdventure = () => {
     if (!selectedCategory) {
@@ -105,7 +103,7 @@ export default function GenerateAdventure() {
   const handleBackToHome = () => {
     navigation.reset({
       index: 0,
-      routes: [{ name: 'Home' }], // Replace 'Home' with your actual home screen name
+      routes: [{ name: 'Home' }],
     });
   };
 
@@ -168,55 +166,24 @@ export default function GenerateAdventure() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Budget</Text>
         <View style={styles.sliderContainer}>
-          {/* Highlighted Wave */}
-          <Image
-            source={require('../assets/images/highlighted-wave.png')}
-            style={styles.sliderBackgroundImage}
+          <MultiSlider
+            values={[budgetRange[0], budgetRange[1]]}
+            sliderLength={350}
+            min={0}
+            max={500}
+            step={10}
+            onValuesChange={(values) => setBudgetRange(values as [number, number])}
+            selectedStyle={{ backgroundColor: '#00A9A5' }}
+            unselectedStyle={{ backgroundColor: '#DDDDDD' }}
+            markerStyle={{
+              height: 22,
+              width: 22,
+              borderRadius: 11,
+              backgroundColor: '#FF6F00',
+              borderWidth: 2,
+              borderColor: '#FFFFFF',
+            }}
           />
-
-          {/* Transparent Left Overlay */}
-          <View
-            style={[
-              styles.overlay,
-              {
-                width: `${(budgetRange[0] / 500) * 100}%`,
-                left: 0,
-              },
-            ]}
-          />
-
-          {/* Transparent Right Overlay */}
-          <View
-            style={[
-              styles.overlay,
-              {
-                width: `${((500 - budgetRange[1]) / 500) * 100}%`,
-                right: 0,
-              },
-            ]}
-          />
-
-          {/* Slider */}
-          <View style={styles.sliderWrapper}>
-            <MultiSlider
-              values={[budgetRange[0], budgetRange[1]]}
-              sliderLength={350}
-              min={0}
-              max={500}
-              step={10}
-              onValuesChange={(values) => setBudgetRange(values)}
-              selectedStyle={{ backgroundColor: '#00A9A5' }}
-              unselectedStyle={{ backgroundColor: '#DDDDDD' }}
-              markerStyle={{
-                height: 22,
-                width: 22,
-                borderRadius: 11,
-                backgroundColor: '#FF6F00',
-                borderWidth: 2,
-                borderColor: '#FFFFFF',
-              }}
-            />
-          </View>
         </View>
         <Text style={styles.sliderLabel}>
           ${budgetRange[0]} - ${budgetRange[1]}
@@ -269,7 +236,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFFFFF', padding: 20 },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Place logo on the right
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 20,
   },
@@ -287,23 +254,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 5,
   },
-  sliderBackgroundImage: {
-    position: 'absolute',
-    top: 0,
-    width: '100%',
-    height: 70,
-    zIndex: 1,
+  categoriesWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    height: 70,
-    backgroundColor: '#FFFFFF',
-    opacity: 0.8,
-    zIndex: 2,
-  },
-  sliderWrapper: { zIndex: 3, width: '100%', marginTop: 45},
-  categoriesWrapper: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
   categoryContainer: { alignItems: 'center', marginBottom: 10, width: '22%' },
   categoryCircle: {
     width: 70,
