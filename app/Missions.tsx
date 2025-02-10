@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,71 +8,89 @@ import {
   FlatList,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types';
+
+// Type Navigation Prop
+type NavigationProp = StackNavigationProp<RootStackParamList, 'Missions'>;
+
+// Define TypeScript interfaces for Missions
+interface Mission {
+  id: string;
+  level: string;
+  text: string;
+  icon: any;
+  gradient: string[];
+}
 
 export default function Missions() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
+  const [activeTab, setActiveTab] = useState<'Missions' | 'Achievements'>('Missions');
+  const [completedMissions, setCompletedMissions] = useState<string[]>(['0']); // Level 1 unlocked initially
 
   // Sample Data for Missions
-  const missions = [
-    {
-      id: '1',
-      level: 'Level 1',
-      text: 'Mission 1 Text',
-      icon: require('../assets/images/camera-icon.png'),
-      gradient: ['#FF7E5F', '#FEB47B'],
-    },
-    {
-      id: '2',
-      level: 'Level 2',
-      text: 'Mission 2 Text',
-      icon: require('../assets/images/location.png'),
-      gradient: ['#76B2FE', '#B69EFE'],
-    },
-    {
-      id: '3',
-      level: 'Level 3',
-      text: 'Mission 3 Text',
-      icon: require('../assets/images/star-icon.png'),
-      gradient: ['#FF6B6B', '#FFD93D'],
-    },
-    {
-      id: '4',
-      level: 'Level 4',
-      text: 'Mission 4 Text',
-      icon: require('../assets/images/handshake-icon.png'),
-      gradient: ['#A1C4FD', '#C2E9FB'],
-    },
+  const missions: Mission[] = [
+    { id: '1', level: 'Level 1', text: 'Complete a fun photo challenge!', icon: require('../assets/images/camera-icon.png'), gradient: ['#FF7E5F', '#FEB47B'] },
+    { id: '2', level: 'Level 2', text: 'Snap a creative moment!', icon: require('../assets/images/location.png'), gradient: ['#76B2FE', '#B69EFE'] },
+    { id: '3', level: 'Level 3', text: 'Capture a spontaneous shot!', icon: require('../assets/images/star-icon.png'), gradient: ['#FF6B6B', '#FFD93D'] },
+    { id: '4', level: 'Level 4', text: 'Show off your best snapshot!', icon: require('../assets/images/handshake-icon.png'), gradient: ['#A1C4FD', '#C2E9FB'] },
   ];
 
-  const renderMission = ({ item }: { item: typeof missions[0] }) => (
-    <View style={[styles.missionCard, { backgroundColor: item.gradient[0] }]}>
-      <View style={styles.missionCardContent}>
-        <View>
-          <Text style={styles.levelText}>{item.level}</Text>
-          <Text style={styles.missionText}>{item.text}</Text>
-          <TouchableOpacity style={styles.joinButton}>
-            <Text style={styles.joinButtonText}>Join now</Text>
-          </TouchableOpacity>
+  // Unlock the next mission
+  const completeMission = (id: string) => {
+    setCompletedMissions((prev) => [...prev, id]);
+  };
+
+  // Function to randomly select a photo mission prompt
+  const getRandomPhotoPrompt = () => {
+    const photoPrompts = [
+      "Take a photo of something yellow!",
+      "Capture a creative shadow!",
+      "Snap a selfie with a street sign!",
+      "Find an interesting pattern to photograph!",
+      "Take a picture of your favorite snack!",
+    ];
+    return photoPrompts[Math.floor(Math.random() * photoPrompts.length)];
+  };
+
+  // Render Missions
+  const renderMission = ({ item, index }: { item: Mission; index: number }) => {
+    const isLocked = index > 0 && !completedMissions.includes(missions[index - 1].id);
+    return (
+      <View style={[styles.missionCard, { backgroundColor: isLocked ? '#CCCCCC' : item.gradient[0] }]}> 
+        <View style={styles.missionCardContent}>
+          <View>
+            <Text style={styles.levelText}>{item.level}</Text>
+            <Text style={styles.missionText}>{item.text}</Text>
+            <TouchableOpacity
+              style={[styles.joinButton, isLocked && styles.disabledButton]}
+              disabled={isLocked}
+              onPress={() => {
+                navigation.navigate('MissionScreen', {
+                  missionTitle: item.level,
+                  missionDescription: item.text,
+                  missionPrompt: getRandomPhotoPrompt(),
+                });
+                completeMission(item.id);
+              }}
+            >
+              <Text style={styles.joinButtonText}>{isLocked ? 'Locked 🔒' : 'Join Now'}</Text>
+            </TouchableOpacity>
+          </View>
+          <Image source={item.icon} style={[styles.missionIcon, isLocked && styles.lockedIcon]} />
         </View>
-        <Image source={item.icon} style={styles.missionIcon} />
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Image
-            source={require('../assets/images/back-icon.png')}
-            style={styles.backIcon}
-          />
+          <Image source={require('../assets/images/back-icon.png')} style={styles.backIcon} />
         </TouchableOpacity>
-        <Image
-          source={require('../assets/images/logo.png')}
-          style={styles.logo}
-        />
+        <Image source={require('../assets/images/logo.png')} style={styles.logo} />
       </View>
 
       {/* Premium Member Info */}
@@ -85,11 +103,14 @@ export default function Missions() {
 
       {/* Tabs */}
       <View style={styles.tabs}>
-        <Text style={[styles.tab, styles.activeTab]}>Missions</Text>
-        <Text style={styles.tab}>Achievements</Text>
+        <TouchableOpacity onPress={() => setActiveTab('Missions')} style={styles.tabContainer}>
+          <Text style={[styles.tab, activeTab === 'Missions' && styles.activeTab]}>Missions</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setActiveTab('Achievements')} style={styles.tabContainer}>
+          <Text style={[styles.tab, activeTab === 'Achievements' && styles.activeTab]}>Achievements</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Mission List */}
       <FlatList
         data={missions}
         keyExtractor={(item) => item.id}
@@ -130,12 +151,6 @@ const styles = StyleSheet.create({
     marginTop: -5,
     marginBottom: 10,
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-  },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -158,9 +173,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#DDD',
   },
-  tab: {
+  tabContainer: {
     flex: 1,
-    textAlign: 'center',
+    alignItems: 'center',
+  },
+  tab: {
     paddingVertical: 10,
     fontSize: 16,
     color: '#999',
@@ -196,19 +213,61 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   joinButton: {
-    backgroundColor: '#FFF',
-    paddingVertical: 5,
-    paddingHorizontal: 15,
+    width: 120,  // Ensures button size stays consistent
+    height: 40,  // Ensures button height remains the same
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 20,
+    backgroundColor: '#FFF',
+  },
+  disabledButton: {
+    backgroundColor: '#BBBBBB',
   },
   joinButtonText: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#FF6B6B',
   },
+  lockedIcon: {
+    opacity: 0.5,
+  },
   missionIcon: {
     width: 40,
     height: 40,
     resizeMode: 'contain',
   },
+  achievementList: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  achievementCard: {
+    width: '45%',
+    alignItems: 'center',
+    padding: 15,
+    margin: 10,
+    borderRadius: 10,
+    backgroundColor: '#F8F8F8',
+  },
+  achievementIcon: {
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
+    marginBottom: 10,
+  },
+  achievementText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  modalContent: { width: '80%', backgroundColor: '#FFF', borderRadius: 20, padding: 20, alignItems: 'center' },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 15 },
+  modalBadge: { width: 80, height: 80, resizeMode: 'contain', marginBottom: 10 },
+  modalPoints: { fontSize: 16, fontWeight: 'bold', color: '#FFA500', marginBottom: 5 },
+  modalDescription: { fontSize: 14, textAlign: 'center', color: '#777' },
+  modalButtons: { flexDirection: 'row', marginTop: 15, width: '100%', justifyContent: 'space-between' },
+  backButtonModal: { padding: 10, backgroundColor: '#333', borderRadius: 10, width: '40%', alignItems: 'center' },
+  backButtonText: { color: '#FFF', fontWeight: 'bold' },
+  shareButton: { padding: 10, backgroundColor: '#FFA500', borderRadius: 10, width: '40%', alignItems: 'center' },
+  shareButtonText: { color: '#FFF', fontWeight: 'bold' },
 });

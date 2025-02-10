@@ -69,7 +69,7 @@ export default function UserProfile() {
         <Text style={styles.membershipText}>Premium Member</Text>
         <Text style={styles.pointsText}>4685 points</Text>
         <Image
-          source={require('../assets/images/crown-icon.png')}
+          source={require('/Users/PrachiJhaveri_1/Desktop/Spontanea/spontanea/assets/images/crown-icon.png')} // Replace with your crown icon
           style={styles.crownIcon}
         />
       </View>
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   membershipCard: {
     backgroundColor: '#333',
     borderRadius: 10,
-    padding: 15,
+    padding: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

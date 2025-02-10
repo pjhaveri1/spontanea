@@ -1,4 +1,5 @@
 // src/types.ts
+
 export interface Adventure {
   id: string;
   name: string;
@@ -10,7 +11,7 @@ export interface Adventure {
   overview: string; // Overview text
   details: string; // Detailed description
   reviews: { user: string; rating: number; comment: string }[]; // Array of reviews
-  directions?: string[]; 
+  directions?: string[];
   longitude: number;
   latitude: number;
 }
@@ -21,6 +22,16 @@ export interface Preferences {
   category: string; // Selected category for filtering
 }
 
+// 🔹 New Mission Interface
+export interface Mission {
+  id: string;
+  level: string;
+  text: string;
+  icon: any; // Local asset or URL
+  gradient: string[]; // Background gradient colors
+}
+
+// 🔹 Update RootStackParamList
 export type RootStackParamList = {
   Opening: undefined;
   LoginSignup: undefined;
@@ -44,5 +55,9 @@ export type RootStackParamList = {
   SeeAllActivities: undefined;
   UserProfile: undefined;
   Missions: undefined;
+  MissionScreen: {
+    missionTitle: string;
+    missionDescription: string;
+    missionPrompt: string;
+  };
 };
-

@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -15,21 +16,21 @@ export default function Signup() {
 
   const handleSignup = () => {
     if (!isChecked) {
-      console.log('Please accept the Terms and Conditions');
+      Alert.alert(
+        "Terms and Conditions",
+        "You must accept the Terms and Conditions before signing up."
+      );
       return;
     }
     console.log('Sign Up pressed');
-    // Navigate to Home after successful sign-up
     navigation.navigate('Home' as never);
   };
 
   const handleSignIn = () => {
-    // Navigate back to LoginAndSignup
     navigation.navigate('Login' as never);
   };
 
   const handleBack = () => {
-    // Navigate back to LoginAndSignup
     navigation.navigate('LoginSignup' as never);
   };
 
@@ -54,38 +55,25 @@ export default function Signup() {
       <View style={styles.whiteBox}>
         {/* Welcome Text */}
         <Text style={styles.title}>Register new account</Text>
-        <Text style={styles.subtitle}>Please log in to your account</Text>
+        <Text style={styles.subtitle}>Please enter your details below</Text>
 
         {/* Input Fields */}
         <TextInput style={styles.input} placeholder="Your name *" />
-        <TextInput
-          style={styles.input}
-          placeholder="Password *"
-          secureTextEntry
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Email *"
-          keyboardType="email-address"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Phone number *"
-          keyboardType="phone-pad"
-        />
+        <TextInput style={styles.input} placeholder="Password *" secureTextEntry />
+        <TextInput style={styles.input} placeholder="Email *" keyboardType="email-address" />
+        <TextInput style={styles.input} placeholder="Phone number *" keyboardType="phone-pad" />
 
         {/* Terms and Conditions */}
         <View style={styles.checkboxContainer}>
           <TouchableOpacity
-            style={[
-              styles.checkbox,
-              { backgroundColor: isChecked ? '#00A9A5' : '#FFFFFF' },
-            ]}
+            style={[styles.checkbox, isChecked && styles.checkedBox]}
             onPress={() => setIsChecked(!isChecked)}
-          />
+          >
+            {isChecked && <Text style={styles.checkmark}>✓</Text>}
+          </TouchableOpacity>
           <Text style={styles.checkboxText}>
-            By creating an account, you agree to our{' '}
-            <Text style={styles.termsText}>Term and Conditions</Text>
+            By creating an account, you agree to our
+            <Text style={styles.termsText}> Terms {'\n'}and Conditions</Text>
           </Text>
         </View>
 
@@ -116,9 +104,7 @@ export default function Signup() {
           <TouchableOpacity style={[styles.socialButton, styles.googleButton]}>
             <Text style={styles.socialButtonText}>G</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.socialButton, styles.facebookButton]}
-          >
+          <TouchableOpacity style={[styles.socialButton, styles.facebookButton]}>
             <Text style={styles.socialButtonText}>f</Text>
           </TouchableOpacity>
         </View>
@@ -127,6 +113,7 @@ export default function Signup() {
   );
 }
 
+// Styles (Includes checkbox updates)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -196,17 +183,26 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 1,
+    width: 24,
+    height: 24,
+    borderWidth: 2,
     borderColor: '#CCCCCC',
     borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 10,
+  },
+  checkedBox: {
+    backgroundColor: '#00A9A5',
+    borderColor: '#00A9A5',
+  },
+  checkmark: {
+    fontSize: 16,
+    color: '#FFFFFF',
   },
   checkboxText: {
     fontSize: 12,
     color: '#666666',
-    marginLeft: 8,
   },
   termsText: {
     color: '#00A9A5',

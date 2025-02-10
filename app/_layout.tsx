@@ -13,6 +13,7 @@ import AdventureDetail from './AdventureDetail';
 import DirectionsPage from './DirectionsPage';
 import UserProfile from './UserProfile'
 import Missions from './Missions'
+import MissionScreen from './MissionScreen';
 import { RootStackParamList } from '../types';
 import { MyAdventuresProvider } from './MyAdventuresContext';
 import SeeAllActivities from './SeeAllActivities';
@@ -44,6 +45,12 @@ export default function RootLayout() {
             <Stack.Screen name="AdventureDetail" component={AdventureDetail} />
             <Stack.Screen name="DirectionsPage" component={DirectionsPage} />
             <Stack.Screen name="SeeAllActivities" component={SeeAllActivities} />
+            <Stack.Screen name="Missions" component={Missions} />
+            <Stack.Screen 
+              name="MissionScreen" 
+              component={MissionScreen} 
+              options={{ headerShown: false }} // Hide header for a cleaner look
+            />
           </Stack.Navigator>
         </ThemeProvider>
       </MyAdventuresProvider>
