@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
     View, 
     Text, 
@@ -6,7 +6,8 @@ import {
     Image, 
     TouchableOpacity, 
     ScrollView, 
-    ActivityIndicator 
+    ActivityIndicator, 
+    Modal
 } from 'react-native';
 import { useFonts } from 'expo-font';
 import { Montserrat_700Bold, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
@@ -16,6 +17,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '/Users/PrachiJhaveri_1/Desktop/Spontanea/spontanea/types';
 import Header from '/Users/PrachiJhaveri_1/Desktop/Spontanea/spontanea/components/header';
 import { generatedAdventures } from '../GenerateAdventure'; // Import adventures from GenerateAdventure
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 interface Activity {
     id: string;
@@ -120,6 +123,18 @@ export default function Index() {
         OpenSansBold: OpenSans_700Bold,
     });
 
+    const [showPopup, setShowPopup] = useState(false);
+
+    // Randomly trigger the pop-up within 3-10 seconds after page load
+    useEffect(() => {
+        const delay = Math.random() * (10000 - 3000) + 3000; // Between 3-10 sec
+        const timer = setTimeout(() => {
+            setShowPopup(true);
+        }, delay);
+        
+        return () => clearTimeout(timer);
+    }, []);
+
     if (!fontsLoaded) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
@@ -134,9 +149,63 @@ export default function Index() {
         navigation.navigate('AdventureDetail', { adventure: randomActivity });
     };
 
+    const collectVoucher = async () => {
+        try {
+            const newVoucher = {
+                id: new Date().getTime().toString(), // Unique ID
+                title: "10% off at % Arabica",
+                description: "Enjoy an extra 10% off at % Arabica!",
+                date: new Date().toLocaleDateString(),
+            };
+    
+            // Get existing vouchers
+            const existingVouchers = await AsyncStorage.getItem("vouchers");
+            const vouchersArray = existingVouchers ? JSON.parse(existingVouchers) : [];
+    
+            // Add new voucher
+            vouchersArray.push(newVoucher);
+    
+            // Save updated vouchers back to storage
+            await AsyncStorage.setItem("vouchers", JSON.stringify(vouchersArray));
+    
+            // Close modal after collecting
+            setShowPopup(false);
+            alert("Voucher collected successfully!");
+        } catch (error) {
+            console.error("Error saving voucher:", error);
+        }
+    };
+
     return (
         <View style={styles.container}>
             <Header />
+
+             {/* Pop-up Modal */}
+             <Modal visible={showPopup} transparent animationType="none">
+                <View style={styles.overlay}>
+                    <View style={styles.popup}>
+                        {/* Close Button */}
+                        <TouchableOpacity style={styles.closeButton} onPress={() => setShowPopup(false)}>
+                            <Text style={styles.closeText}>✕</Text>
+                        </TouchableOpacity>
+
+                        {/* Pop-up Content */}
+                        <Text style={styles.popupText}>Enjoy an extra</Text>
+                        <Text style={styles.popupDiscount}>10% off</Text>
+                        <Text style={styles.popupText}>At Arabica</Text>
+
+                        {/* Call to Action */}
+                        <TouchableOpacity style={styles.ctaButton} onPress={collectVoucher}>
+                            <Text style={styles.ctaText}>Get 10% off</Text>
+                        </TouchableOpacity>
+
+                        {/* No Thanks Option */}
+                        <TouchableOpacity onPress={() => setShowPopup(false)}>
+                            <Text style={styles.noThanks}>No, Thanks</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
 
             <View style={styles.welcomeSection}>
                 <Text style={styles.welcomeText}>Welcome!</Text>
@@ -226,6 +295,32 @@ const styles = StyleSheet.create({
         color: '#FF4500',
         marginBottom: 25,
     },
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    popup: {
+        backgroundColor: '#A25C37', // Adjust to match your UI
+        padding: 20,
+        borderRadius: 10,
+        width: '80%',
+        alignItems: 'center',
+    },
+    closeButton: { position: 'absolute', top: 10, right: 10 },
+    closeText: { fontSize: 18, color: '#FFF' },
+    popupText: { fontSize: 16, color: '#FFF', marginVertical: 5 },
+    popupDiscount: { fontSize: 28, fontWeight: 'bold', color: '#FFF' },
+    ctaButton: {
+        backgroundColor: '#FFF',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        marginTop: 10,
+    },
+    ctaText: { fontSize: 16, fontWeight: 'bold', color: '#A25C37' },
+    noThanks: { fontSize: 14, color: '#FFF', marginTop: 10, textDecorationLine: 'underline' },
     buttonContainer: {
         flexDirection: 'column',
         alignItems: 'center',

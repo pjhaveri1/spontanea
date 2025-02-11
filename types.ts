@@ -1,5 +1,3 @@
-// src/types.ts
-
 export interface Adventure {
   id: string;
   name: string;
@@ -29,9 +27,17 @@ export interface Mission {
   text: string;
   icon: any; // Local asset or URL
   gradient: string[]; // Background gradient colors
+  points?: number;
 }
 
-// 🔹 Update RootStackParamList
+export interface Voucher {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+}
+
+// 🔹 Updated RootStackParamList
 export type RootStackParamList = {
   Opening: undefined;
   LoginSignup: undefined;
@@ -43,7 +49,7 @@ export type RootStackParamList = {
     duration?: number;
     budget?: number[]; // [minBudget, maxBudget]
     category?: string;
-  }; // Allow optional params
+  };
   AdventureResults: {
     adventures: Adventure[];
     duration: number;
@@ -59,5 +65,8 @@ export type RootStackParamList = {
     missionTitle: string;
     missionDescription: string;
     missionPrompt: string;
+    missionPoints: number; // Pass the points directly
+    missionId: string,
   };
+  Vouchers: undefined;
 };

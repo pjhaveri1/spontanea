@@ -9,19 +9,39 @@ import {
   Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import * as Location from 'expo-location';
 
 export default function Signup() {
   const [isChecked, setIsChecked] = useState(false);
   const navigation = useNavigation();
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (!isChecked) {
       Alert.alert(
         "Terms and Conditions",
-        "You must accept the Terms and Conditions before signing up."
+        "You must accept our Terms and Conditions before signing up."
       );
       return;
     }
+    
+    // Request location permission when signing up
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          "Location Access Needed",
+          "We use your location to offer personalized local recommendations and exciting adventures. Please enable location services in your settings and try again."
+        );
+        return;
+      }
+    } catch (error) {
+      Alert.alert(
+        "Oops!",
+        "Something went wrong while requesting location access. Please try again later."
+      );
+      return;
+    }
+    
     console.log('Sign Up pressed');
     navigation.navigate('Home' as never);
   };
@@ -54,7 +74,7 @@ export default function Signup() {
       {/* White Box Container */}
       <View style={styles.whiteBox}>
         {/* Welcome Text */}
-        <Text style={styles.title}>Register new account</Text>
+        <Text style={styles.title}>Register New Account</Text>
         <Text style={styles.subtitle}>Please enter your details below</Text>
 
         {/* Input Fields */}
@@ -113,7 +133,7 @@ export default function Signup() {
   );
 }
 
-// Styles (Includes checkbox updates)
+// Styles (unchanged)
 const styles = StyleSheet.create({
   container: {
     flex: 1,

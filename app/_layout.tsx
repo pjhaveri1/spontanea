@@ -1,4 +1,5 @@
 import React from 'react';
+import 'react-native-gesture-handler';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ThemeProvider, DefaultTheme } from '@react-navigation/native';
 import TabLayout from './tabs/_layout';
@@ -11,56 +12,60 @@ import Home from './tabs/index';
 import AdventureResults from './AdventureResults';
 import AdventureDetail from './AdventureDetail';
 import DirectionsPage from './DirectionsPage';
-import UserProfile from './UserProfile'
-import Missions from './Missions'
+import UserProfile from './UserProfile';
+import Missions from './Missions';
 import MissionScreen from './MissionScreen';
 import { RootStackParamList } from '../types';
 import { MyAdventuresProvider } from './MyAdventuresContext';
 import SeeAllActivities from './SeeAllActivities';
 import Toast from 'react-native-toast-message';
+import { PointsProvider } from './PointsContext';
+import VoucherScreen from './Vouchers'
 
 const Stack = createStackNavigator<RootStackParamList>(); // Use typed navigator
 
 export default function RootLayout() {
   return (
     <>
-      <MyAdventuresProvider>
-        <ThemeProvider value={DefaultTheme}>
-          <Stack.Navigator
-            initialRouteName="Opening"
-            screenOptions={{
-              headerShown: false,
-              cardStyleInterpolator: () => ({
-                cardStyle: { opacity: 1 },
-              }),
-            }}
-          >
-            <Stack.Screen name="Opening" component={Opening} />
-            <Stack.Screen name="LoginSignup" component={LoginAndSignup} />
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="Signup" component={Signup} />
-            <Stack.Screen name="Home" component={MainDrawerNavigator} />
-            <Stack.Screen name="GenerateAdventure" component={GenerateAdventure} />
-            <Stack.Screen name="AdventureResults" component={AdventureResults} />
-            <Stack.Screen name="AdventureDetail" component={AdventureDetail} />
-            <Stack.Screen name="DirectionsPage" component={DirectionsPage} />
-            <Stack.Screen name="SeeAllActivities" component={SeeAllActivities} />
-            <Stack.Screen name="Missions" component={Missions} />
-            <Stack.Screen 
-              name="MissionScreen" 
-              component={MissionScreen} 
-              options={{ headerShown: false }} // Hide header for a cleaner look
-            />
-          </Stack.Navigator>
-        </ThemeProvider>
-      </MyAdventuresProvider>
+      <PointsProvider>
+        <MyAdventuresProvider>
+          <ThemeProvider value={DefaultTheme}>
+            <Stack.Navigator
+              initialRouteName="Opening"
+              screenOptions={{
+                headerShown: false,
+                cardStyleInterpolator: () => ({
+                  cardStyle: { opacity: 1 },
+                }),
+              }}
+            >
+              <Stack.Screen name="Opening" component={Opening} />
+              <Stack.Screen name="LoginSignup" component={LoginAndSignup} />
+              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="Signup" component={Signup} />
+              <Stack.Screen name="Home" component={MainDrawerNavigator} />
+              <Stack.Screen name="GenerateAdventure" component={GenerateAdventure} />
+              <Stack.Screen name="AdventureResults" component={AdventureResults} />
+              <Stack.Screen name="AdventureDetail" component={AdventureDetail} />
+              <Stack.Screen name="DirectionsPage" component={DirectionsPage} />
+              <Stack.Screen name="SeeAllActivities" component={SeeAllActivities} />
+              <Stack.Screen name="Missions" component={Missions} />
+              <Stack.Screen 
+                name="MissionScreen" 
+                component={MissionScreen} 
+                options={{ headerShown: false }} // Hide header for a cleaner look
+              />
+            </Stack.Navigator>
+          </ThemeProvider>
+        </MyAdventuresProvider>
+      </PointsProvider>
       {/* Toast Message Component */}
       <Toast />
     </>
   );
 }
 
-// Drawer Navigator
+// Drawer Navigator (unchanged)
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
@@ -92,6 +97,11 @@ function MainDrawerNavigator() {
         options={{ title: 'Missions' }} 
         component={Missions}
       />
+      <Drawer.Screen
+        name="Vouchers"
+        options={{ title: 'Vouchers' }} 
+        component={VoucherScreen}
+      />
     </Drawer.Navigator>
   );
 }
@@ -117,10 +127,16 @@ function CustomDrawerContent({ navigation }: any) {
           onPress={() => navigation.navigate('UserProfile')}
         />
         <DrawerItem
-          label="Achievements"
+          label="Missions"
           icon="star"
           iconType="FontAwesome"
           onPress={() => navigation.navigate('Missions')}
+        />
+        <DrawerItem
+          label="Vouchers"
+          icon="ticket"
+          iconType="Entypo"
+          onPress={() => navigation.navigate('Vouchers')}
         />
         <DrawerItem
           label="Sign Out"
@@ -159,7 +175,7 @@ function DrawerItem({
   );
 }
 
-// Styles
+// Drawer styles remain unchanged.
 const styles = StyleSheet.create({
   drawerContainer: { flex: 1, padding: 20, backgroundColor: '#fff' },
   profileSection: { marginTop: 60, marginBottom: 30, alignItems: 'center' },

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,8 @@ import {
   FlatList,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+// Import the PointsContext from your context file (adjust the path as needed)
+import { PointsContext } from '../app/PointsContext';
 
 export default function UserProfile() {
   const navigation = useNavigation();
@@ -17,6 +19,9 @@ export default function UserProfile() {
   const [locationNotifications, setLocationNotifications] = useState(true);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('English');
+
+  // Access the shared points state from the PointsContext.
+  const { points } = useContext(PointsContext);
 
   const togglePushNotifications = () =>
     setPushNotifications((previousState) => !previousState);
@@ -67,7 +72,7 @@ export default function UserProfile() {
       {/* Membership Card */}
       <View style={styles.membershipCard}>
         <Text style={styles.membershipText}>Premium Member</Text>
-        <Text style={styles.pointsText}>4685 points</Text>
+        <Text style={styles.pointsText}>{points} points</Text>
         <Image
           source={require('/Users/PrachiJhaveri_1/Desktop/Spontanea/spontanea/assets/images/crown-icon.png')} // Replace with your crown icon
           style={styles.crownIcon}

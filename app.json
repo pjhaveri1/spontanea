@@ -16,12 +16,17 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to suggest spontaneous activities."
+        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to suggest spontaneous activities.",
+        "NSCameraUsageDescription": "This app requires access to your camera to take photos for missions.",
+        "NSPhotoLibraryUsageDescription": "This app requires access to your photo library to upload photos."
       },
       "bundleIdentifier": "com.anonymous.spontanea"
     },
     "android": {
       "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
         "ACCESS_FINE_LOCATION"
       ],
       "adaptiveIcon": {
